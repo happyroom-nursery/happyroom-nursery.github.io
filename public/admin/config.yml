@@ -1,0 +1,24 @@
+backend:
+  name: github
+  repo: happyroom-nursery/happyroom-nursery.github.io
+  branch: main
+
+# ローカルでの動作確認用設定（npx decap-cms-proxy-server を走らせることで、ローカルでCMS編集が可能になります）
+local_backend: true
+
+media_folder: "public/images"
+public_folder: "/images"
+
+collections:
+  - name: "news"
+    label: "お知らせ"
+    folder: "public/content/news"
+    create: true
+    delete: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "日付", name: "date", widget: "date", format: "YYYY-MM-DD" }
+      - { label: "タイトル", name: "title", widget: "string" }
+      - { label: "本文", name: "content", widget: "text" }
