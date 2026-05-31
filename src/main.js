@@ -102,8 +102,11 @@ function setupNavigation() {
 }
 
 // ----------------------------------------------------
-// 3. お問い合わせフォーム送信アニメーション＆インタラクション (WOWエフェクト)
+// 3. お問い合わせフォーム送信（Google Apps Scriptと接続）
 // ----------------------------------------------------
+// ※主君へ：Google Apps Scriptをデプロイして取得した「ウェブアプリのURL」を、以下の変数に貼り付けてください。
+const GAS_WEB_APP_URL = "INSERT_YOUR_GAS_WEB_APP_URL_HERE";
+
 function setupInquiryForm() {
   const form = document.getElementById('inquiry-form');
   if (!form) return;
@@ -126,12 +129,20 @@ function setupInquiryForm() {
 
     // 送信ボタンのローディング風エフェクト
     const submitBtn = document.getElementById('btn-submit');
-    const originalBtnText = submitBtn.innerHTML;
     submitBtn.disabled = true;
     submitBtn.innerHTML = '✨ 送信処理中...';
 
-    setTimeout(() => {
-      // ポップアップやアラートを使わず、フォーム自体をあたたかみのある「完了画面」に置き換える
+    // 送信データオブジェクトの作成
+    const payload = {
+      name: name,
+      email: email,
+      tel: tel,
+      select: select,
+      msg: msg
+    };
+
+    // 完了時の画面切り替え処理
+    const showSuccessUI = () => {
       const parent = form.parentElement;
       parent.style.opacity = 0;
       
@@ -155,8 +166,36 @@ function setupInquiryForm() {
         `;
         parent.style.opacity = 1;
       }, 300);
+    };
 
-    }, 1500); // 1.5秒のフェイクローディングで操作感を演出
+    // GAS_WEB_APP_URLがプレースホルダーのままの場合は擬似デモ送信をする
+    if (GAS_WEB_APP_URL === "INSERT_YOUR_GAS_WEB_APP_URL_HERE") {
+      console.warn("GASのURLが設定されていないため、デモモードで動作しています。");
+      setTimeout(() => {
+        showSuccessUI();
+      }, 1500);
+      return;
+    }
+
+    // 本番：Google Apps ScriptへデータをPOST送信
+    fetch(GAS_WEB_APP_URL, {
+      method: "POST",
+      mode: "no-cors", // GitHub PagesからGoogle Apps ScriptへのCORS制限を完全回避
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      // 成功時
+      showSuccessUI();
+    })
+    .catch((error) => {
+      console.error('送信エラー:', error);
+      alert('申し訳ありません。送信中にエラーが発生しました。お手数ですが、お電話にてお問い合わせください。');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '送信する (内容を確認)';
+    });
   });
 }
 
