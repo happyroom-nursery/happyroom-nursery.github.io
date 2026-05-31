@@ -7,14 +7,22 @@ function renderNews() {
   const container = document.getElementById('news-list-container');
   if (!container) return;
 
-  try {
-    // Viteのビルド時静的スキャン機能「import.meta.glob」を利用
-    const newsModules = import.meta.glob('/public/content/news/*.json', { eager: true });
-    
-    // オブジェクトから値（各お知らせデータ）を抽出し、配列に変換
-    const newsList = Object.values(newsModules).map(module => module.default || module);
+  // デモデータ (GASが未設定、またはエラー時のフォールバック用)
+  const demoNews = [
+    {
+      "date": "2026-05-25",
+      "title": "託児所 Happy Room ホームページを開設しました！",
+      "content": "地域の皆様に安心してご利用いただけるアットホームな託児所「Happy Room」です。千葉県柏市豊四季にて、まもなく新規開園いたします。大切なお子様が、まるでおうちにいるかのように「あたたかく、のびのびと」過ごせる空間をご用意しました。園内の見学やご利用に関するお問い合わせは、お電話またはお問い合わせフォームより随時受け付けております。"
+    },
+    {
+      "date": "2026-05-26",
+      "title": "一時預かり保育の受付を開始いたします",
+      "content": "お仕事、通院、お買い物、リフレッシュなど、様々な用途でご利用いただける一時預かり保育の事前登録・ご予約の受付を開始いたしました。1時間単位からの柔軟なご利用が可能です。お気軽にお問い合わせください。"
+    }
+  ];
 
-    if (newsList.length === 0) {
+  const renderData = (newsList) => {
+    if (!newsList || newsList.length === 0) {
       container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">現在、新しいお知らせはありません。</div>`;
       return;
     }
@@ -42,15 +50,29 @@ function renderNews() {
         </article>
       `;
     }).join('');
+  };
 
-  } catch (error) {
-    console.error('お知らせデータの取得に失敗しました:', error);
-    container.innerHTML = `
-      <div style="text-align: center; color: var(--accent); padding: 40px 0;">
-        ⚠️ お知らせデータのロードでエラーが発生しました。
-      </div>
-    `;
+  // GAS_WEB_APP_URLがプレースホルダーのままの場合はデモデータを表示
+  if (GAS_WEB_APP_URL === "INSERT_YOUR_GAS_WEB_APP_URL_HERE") {
+    renderData(demoNews);
+    return;
   }
+
+  // 本番：Google Apps Script (Googleスプレッドシート) から動的リアルタイム取得
+  fetch(GAS_WEB_APP_URL)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.status === "error") {
+        console.error("GASエラー:", data.message);
+        renderData(demoNews);
+      } else {
+        renderData(data);
+      }
+    })
+    .catch(error => {
+      console.error('お知らせ取得エラー:', error);
+      renderData(demoNews); // エラー発生時はフォールバックでデモデータを安全に表示
+    });
 }
 
 // XSS対策用エスケープ関数
