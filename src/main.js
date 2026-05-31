@@ -1,13 +1,13 @@
 import './style.css';
 
 // ----------------------------------------------------
-// 1. ヘッドレスCMSデータ (Decap CMSによって書き出された個別JSON) の動的一括読み込み
+// 1. ハイブリッドお知らせデータ (Decap CMSのJSON + Googleスプレッドシート) の自動統合・マージ読み込み
 // ----------------------------------------------------
 function renderNews() {
   const container = document.getElementById('news-list-container');
   if (!container) return;
 
-  // デモデータ (GASが未設定、またはエラー時のフォールバック用)
+  // デモデータ (GASおよびDecap CMSが未設定、またはエラー時の最終フォールバック用)
   const demoNews = [
     {
       "date": "2026-05-25",
@@ -21,17 +21,41 @@ function renderNews() {
     }
   ];
 
-  const renderData = (newsList) => {
-    if (!newsList || newsList.length === 0) {
-      container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">現在、新しいお知らせはありません。</div>`;
-      return;
+  // A. Decap CMSで生成されたローカルの静的お知らせJSONファイルを自動スキャン・読み込み
+  let staticNewsList = [];
+  try {
+    // Viteのビルド時静的スキャン機能「import.meta.glob」を利用
+    const newsModules = import.meta.glob('/public/content/news/*.json', { eager: true });
+    staticNewsList = Object.values(newsModules).map(module => module.default || module);
+  } catch (err) {
+    console.warn("ローカル静的お知らせJSONの読み込みに失敗しました（本番ビルド時は正常にバンドルされます）:", err);
+  }
+
+  // 表示処理関数
+  const renderData = (dynamicNewsList) => {
+    // B. 静的お知らせと動的（スプレッドシート）お知らせをマージ
+    const mergedList = [...staticNewsList, ...dynamicNewsList];
+
+    // C. 重複排除（同じ日付かつ同じタイトルのものを削除）
+    const uniqueNewsList = [];
+    const seen = new Set();
+    for (const item of mergedList) {
+      if (!item || !item.date || !item.title) continue;
+      const key = `${item.date.trim()}_${item.title.trim()}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueNewsList.push(item);
+      }
     }
 
+    // 最終的に何もデータがない場合はデモデータを読み込み
+    const finalList = uniqueNewsList.length > 0 ? uniqueNewsList : demoNews;
+
     // 日付が新しい順にソート (YYYY-MM-DD 形式の文字列比較)
-    newsList.sort((a, b) => new Date(b.date) - new Date(a.date));
+    finalList.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     // お知らせをHTMLに生成・レンダリング
-    container.innerHTML = newsList.map(item => {
+    container.innerHTML = finalList.map(item => {
       // 本文が長い場合は200文字で省略表示
       const summaryText = item.content.length > 200 
         ? item.content.substring(0, 200) + '...' 
@@ -52,26 +76,29 @@ function renderNews() {
     }).join('');
   };
 
-  // GAS_WEB_APP_URLがプレースホルダーのままの場合はデモデータを表示
+  // GAS_WEB_APP_URLがプレースホルダーや未設定の場合は、静的お知らせのみでレンダリング
   if (GAS_WEB_APP_URL === "INSERT_YOUR_GAS_WEB_APP_URL_HERE") {
-    renderData(demoNews);
+    renderData([]);
     return;
   }
 
-  // 本番：Google Apps Script (Googleスプレッドシート) から動的リアルタイム取得
+  // D. 本番：Google Apps Script (Googleスプレッドシート) からリアルタイム動的ロード
   fetch(GAS_WEB_APP_URL)
     .then(response => response.json())
     .then(data => {
+      // GAS側がエラーを返した、またはデータが不正な場合のガード
       if (data && data.status === "error") {
         console.error("GASエラー:", data.message);
-        renderData(demoNews);
+        renderData([]);
       } else {
-        renderData(data);
+        // data が配列であることを確認。または { news: [...] } の形に将来拡張されても動くように対応
+        const fetchedNews = Array.isArray(data) ? data : (data.news || []);
+        renderData(fetchedNews);
       }
     })
     .catch(error => {
-      console.error('お知らせ取得エラー:', error);
-      renderData(demoNews); // エラー発生時はフォールバックでデモデータを安全に表示
+      console.error('スプレッドシートお知らせ取得エラー（静的データのみ表示します）:', error);
+      renderData([]); // 通信エラー時は静的データのみで安全にレンダリング
     });
 }
 

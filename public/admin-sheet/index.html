@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Room 専用管理ダッシュボード | 託児所HP管理</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+      :root {
+        --primary: HSL(24, 95%, 62%);        /* Sunshine Orange */
+        --primary-light: HSL(24, 95%, 95%);
+        --secondary: HSL(94, 40%, 48%);      /* Sprout Green */
+        --secondary-light: HSL(94, 40%, 94%);
+        --text-dark: HSL(24, 15%, 20%);
+        --text-muted: HSL(24, 10%, 45%);
+        --bg-cream: HSL(33, 75%, 97%);       /* Warm Cream */
+        --bg-white: #ffffff;
+        --border: HSL(24, 25%, 90%);
+        --shadow: 0 10px 30px rgba(220, 110, 50, 0.08);
+        --font-body: 'Kiwi Maru', serif;
+        --font-heading: 'Outfit', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background-color: var(--bg-cream);
+        color: var(--text-dark);
+        line-height: 1.8;
+        padding: 40px 20px;
+      }
+
+      .dashboard-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: var(--bg-white);
+        border-radius: 32px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+
+      /* Header */
+      .dashboard-header {
+        background: linear-gradient(135deg, var(--primary), HSL(15, 95%, 58%));
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+        position: relative;
+      }
+
+      .header-icon {
+        font-size: 60px;
+        margin-bottom: 12px;
+        display: block;
+        animation: bounce 2s infinite ease-in-out;
+      }
+
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+
+      .dashboard-title {
+        font-size: 28px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+
+      .dashboard-subtitle {
+        font-size: 14px;
+        opacity: 0.9;
+        letter-spacing: 1px;
+      }
+
+      /* Body */
+      .dashboard-body {
+        padding: 40px 30px;
+      }
+
+      /* Intro Card */
+      .intro-card {
+        background-color: var(--primary-light);
+        border: 1px dashed var(--primary);
+        padding: 24px;
+        border-radius: 24px;
+        margin-bottom: 36px;
+        text-align: center;
+      }
+
+      .intro-title {
+        font-size: 18px;
+        color: var(--primary);
+        font-weight: 500;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .intro-text {
+        font-size: 14px;
+        color: var(--text-dark);
+        line-height: 1.6;
+      }
+
+      /* Action Section */
+      .action-section {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(135deg, var(--secondary), HSL(94, 45%, 42%));
+        color: white;
+        text-decoration: none;
+        padding: 18px 40px;
+        border-radius: 50px;
+        font-size: 18px;
+        font-weight: 500;
+        box-shadow: 0 8px 24px rgba(90, 150, 60, 0.25);
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(90, 150, 60, 0.35);
+      }
+
+      .btn-primary:active {
+        transform: translateY(-1px);
+      }
+
+      .action-note {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 14px;
+      }
+
+      /* Manual Sections */
+      .section-title {
+        font-size: 20px;
+        color: var(--primary);
+        margin-bottom: 20px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--primary-light);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .step-list {
+        list-style: none;
+        margin-bottom: 40px;
+      }
+
+      .step-item {
+        background-color: var(--bg-cream);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 16px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        border: 1px solid var(--border);
+      }
+
+      .step-number {
+        background-color: var(--primary);
+        color: white;
+        font-family: var(--font-heading);
+        font-size: 16px;
+        font-weight: bold;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .step-content {
+        font-size: 14px;
+      }
+
+      .step-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: var(--text-dark);
+      }
+
+      .step-desc {
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      /* Footer */
+      .dashboard-footer {
+        background-color: var(--bg-cream);
+        padding: 24px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-muted);
+        border-top: 1px solid var(--border);
+      }
+
+      .footer-logo {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--primary);
+        margin-bottom: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Header -->
+      <header class="dashboard-header">
+        <span class="header-icon">🧸</span>
+        <h1 class="dashboard-title">Happy Room HP 更新パネル</h1>
+        <p class="dashboard-subtitle">FOR OCHIAI JURA</p>
+      </header>
+
+      <!-- Body -->
+      <div class="dashboard-body">
+        <!-- Intro -->
+        <div class="intro-card">
+          <h2 class="intro-title">🔑 ログイン不要・広告ブロック絶対回避システム</h2>
+          <p class="intro-text">
+            この管理システムは、Googleスプレッドシートとホームページを直結させた最新鋭の構成です。<br>
+            面倒なログインパスワードの入力は不要で、スマートフォンの広告ブロッカー等に遮断されるリスクもありません。
+          </p>
+        </div>
+
+        <!-- Action Button -->
+        <div class="action-section">
+          <!-- 
+            ※主君へ：スプレッドシート「happyroom-data」の編集URLを、以下の href 属性に貼り付けてください。
+            例: href="https://docs.google.com/spreadsheets/d/xxx/edit" 
+          -->
+          <a href="https://docs.google.com/spreadsheets/" target="_blank" class="btn-primary">
+            <span>🟢</span> スプレッドシートを開いて更新する
+          </a>
+          <p class="action-note">※文字の追加・修正を行うと、自動的かつリアルタイムにホームページへ反映されます。</p>
+        </div>
+
+        <!-- PC Manual -->
+        <h2 class="section-title">💻 パソコンからの更新手順</h2>
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3 class="step-title">スプレッドシートを開く</h3>
+              <p class="step-desc">上記の「スプレッドシートを開いて更新する」ボタンをクリックします。</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3 class="step-title">お知らせ内容を編集・追記</h3>
+              <p class="step-desc">「お知らせ」シートの最下部に、日付（YYYY-MM-DD）・タイトル・本文を入力します。</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3 class="step-title">自動保存 ➔ 反映完了！</h3>
+              <p class="step-desc">スプレッドシートは自動保存されます。そのままホームページ（happyroom-nursery.github.io）を開き、更新（リロード）するだけで一瞬で新着お知らせが反映されます！</p>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Mobile Manual -->
+        <h2 class="section-title">📱 スマートフォンからの更新手順</h2>
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3 class="step-title">スプレッドシートアプリをインストール</h3>
+              <p class="step-desc">iPhoneの場合はApp Store、Androidの場合はGoogle Playストアから「Googleスプレッドシート」アプリ（無料）をインストールします。</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3 class="step-title">「happyroom-data」を開く</h3>
+              <p class="step-desc">アプリを起動し、専用Googleアカウントでログインすると一覧に「happyroom-data」が表示されるので、タップして開きます。</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3 class="step-title">文字を打ち込んで、一瞬でHP更新！</h3>
+              <p class="step-desc">追加したいお知らせの内容をセルに入力するだけで、外出先からでも即座にホームページが最新の状態へと切り替わります。</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Footer -->
+      <footer class="dashboard-footer">
+        <div class="footer-logo">Happy Room Daycare</div>
+        <p>© 2026 Happy Room. All Rights Reserved.</p>
+      </footer>
+    </div>
+  </body>
+</html>
