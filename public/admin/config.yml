@@ -4,7 +4,7 @@ backend:
   branch: main
 
 # ローカルでの動作確認用設定（npx decap-cms-proxy-server を走らせることで、ローカルでCMS編集が可能になります）
-local_backend: true
+# local_backend: true
 
 media_folder: "public/images"
 public_folder: "/images"
