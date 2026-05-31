@@ -105,7 +105,7 @@ function setupNavigation() {
 // 3. お問い合わせフォーム送信（Google Apps Scriptと接続）
 // ----------------------------------------------------
 // ※主君へ：Google Apps Scriptをデプロイして取得した「ウェブアプリのURL」を、以下の変数に貼り付けてください。
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyp4nAmMEbSO20WvicttISuGpxx_kwbC4WU2kPh4uBamGVd3ok_WYQxme6fckJDaDJ/exec";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyBp4nAmMEbSO20WvicttISuGpxx_kwbC4WU2kPh4uBamGVd3Ok_WYQxmE6fcKJDAdJ/exec";
 
 function setupInquiryForm() {
   const form = document.getElementById('inquiry-form');
