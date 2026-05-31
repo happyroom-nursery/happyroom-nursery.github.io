@@ -152,7 +152,7 @@ function setupInquiryForm() {
             <div style="font-size: 60px; margin-bottom: 20px;">🧸</div>
             <h3 style="font-family: var(--font-heading); font-size: 26px; margin: 0 0 16px; color: var(--primary);">送信が完了しました！</h3>
             <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 28px; line-height: 1.8;">
-              落合様、お問い合わせいただきありがとうございます。<br>
+              お問い合わせいただきありがとうございます。<br>
               ご入力いただいた連絡先へ、保育スタッフより2営業日以内に折り返しご連絡差し上げます。
             </p>
             <div style="background-color: var(--bg-cream); padding: 20px; border-radius: 16px; text-align: left; font-size: 14px; border: 1px dashed var(--border); margin-bottom: 28px;">
