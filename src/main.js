@@ -256,3 +256,37 @@ document.addEventListener('DOMContentLoaded', () => {
   renderNews();
   setupInquiryForm();
 });
+// --- Image Modal Logic ---
+const modal = document.getElementById('image-modal');
+const modalImg = document.getElementById('modal-image');
+const closeModal = document.querySelector('.modal-close');
+const galleryImages = document.querySelectorAll('.gallery-image');
+
+galleryImages.forEach(img => {
+  img.addEventListener('click', function() {
+    modal.style.display = 'flex';
+    setTimeout(() => {
+      modal.classList.add('show');
+    }, 10);
+    modalImg.src = this.src;
+  });
+});
+
+function closeImageModal() {
+  modal.classList.remove('show');
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 300);
+}
+
+if (closeModal) {
+  closeModal.addEventListener('click', closeImageModal);
+}
+
+if (modal) {
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal || e.target === modalImg) {
+      closeImageModal();
+    }
+  });
+}

@@ -274,9 +274,9 @@
           <p class="section-desc">お子さまがのびのびと安心して遊べる、清潔で温かみのあるお部屋です。</p>
         </div>
         <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 0 16px; max-width: 1000px; margin: 0 auto;">
-          <img src="/images/room1.jpg" alt="園内の様子1" style="width: 100%; height: 250px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);" />
-          <img src="/images/room2.jpg" alt="園内の様子2" style="width: 100%; height: 250px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);" />
-          <img src="/images/room3.jpg" alt="園内の様子3" style="width: 100%; height: 250px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);" />
+          <img src="/images/room1.jpg" alt="園内の様子1" class="gallery-image" style="width: 100%; height: 250px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s;" />
+          <img src="/images/room2.jpg" alt="園内の様子2" class="gallery-image" style="width: 100%; height: 250px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s;" />
+          <img src="/images/room3.jpg" alt="園内の様子3" class="gallery-image" style="width: 100%; height: 250px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s;" />
         </div>
       </section>
 
@@ -392,6 +392,14 @@
         &copy; 2026 Happy Room. All Rights Reserved. 代表者: 落合 樹羅
       </div>
     </footer>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <img id="modal-image" src="" alt="拡大画像">
+      </div>
+    </div>
 
     <!-- Entry Point JavaScript -->
     <script type="module" src="/src/main.js"></script>
